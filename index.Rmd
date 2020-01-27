@@ -1,10 +1,7 @@
 ---
+pagetitle: Packages R Antares
 output: html_document
 ---
-
-<head>
-  <title>Packages R Antares</title>
-</head>
 
 
 ```{css, echo=FALSE}
@@ -59,10 +56,12 @@ body {
 .thumbnail-content {
   color: #000;
   padding: 5px;
+  text-align: center;
 }
 
 .thumbnail-title {
   padding: 5px;
+  text-align: center;
 }
 
 .thumbnail {
@@ -100,6 +99,12 @@ library(yaml)
 <img src="images/antares-logo.png" class="logo-xs visible-xs-block"></img>
 </a>
 <h2 class="title">Antares R packages</h2>
+<p style="text-align: center;">
+<a href="https://rte-antares-rpackage.github.io/rPackagesRte/dashboard.html" style="color: #FFF;">
+See activity dashboard
+</a>
+</p>
+
 
 ```{r font}
 use_pkg_gfont("roboto")
