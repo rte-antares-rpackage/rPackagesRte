@@ -1,0 +1,155 @@
+---
+output: html_document
+---
+
+<head>
+  <title>Packages R Antares</title>
+</head>
+
+
+```{css, echo=FALSE}
+body {
+  /*font-family: Georgia, "Times New Roman", Times, serif !important;*/
+  /*font-family: 'Roboto', sans-serif !important;*/
+  /*font: normal normal bold 55px/1.4em raleway,sans-serif;*/
+  background-color: #112446 !important;
+  color: #FFF !important;
+}
+
+.main-container {
+  top: 15px;
+  width:90% !important;
+  max-width: 1400px !important;
+  margin: 0 auto;
+}
+
+
+.logo {
+  display: block;
+  background: white;
+  padding: 30px;
+  height: 170px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 60px;
+}
+
+.logo-xs {
+  display: block;
+  background: white;
+  padding: 30px;
+  height: 110px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+}
+
+.title {
+  text-align: center;
+  font-weight:bold;
+  border-top: 2px solid white;
+  margin-top: 0;
+  text-transform: uppercase;
+  font-size: 17px;
+  padding-top: 10px;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+.thumbnail-content {
+  color: #000;
+  padding: 5px;
+}
+
+.thumbnail-title {
+  padding: 5px;
+}
+
+.thumbnail {
+  position: relative;
+  padding: 0px;
+  margin-bottom: 20px;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 210px;
+  object-fit: contain;
+}
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# remotes::install_github("dreamRs/shufflecards")
+library(shufflecards)
+# remotes::install_github("dreamRs/particlesjs")
+library(particlesjs)
+# devtools::install_github("dreamRs/gfonts")
+library(gfonts)
+library(htmltools)
+library(shiny)
+library(yaml)
+```
+
+
+<a href="https://antares-simulator.org/" target = "_blank">
+<img src="images/antares-logo.png" class="logo hidden-xs"></img>
+<img src="images/antares-logo.png" class="logo-xs visible-xs-block"></img>
+</a>
+<h2 class="title">Antares R packages</h2>
+
+```{r font}
+use_pkg_gfont("roboto")
+```
+
+
+```{r particles}
+particlesjs::particles(
+  config = particlesjs::particles_config(
+    particles.color.value = "#ff9800",
+    particles.size.value = 5,
+    particles.opacity.value = 1,
+    particles.line_linked.opacity = 1,
+    particles.line_linked.color = "#ff9800"
+  ), timeout = 1000
+)
+```
+
+
+
+
+```{r packages, results='asis'}
+packages <- yaml.load_file("packages.yml")
+
+
+fluidRow(
+  lapply(
+    X = packages$packages,
+    FUN = function(package) {
+      column(
+        width = 4,
+        thumbnail(
+          title = package$name, 
+          content = package$description, 
+          href = package$link,
+          media = tags$img(src = paste0("images/", package$image)), 
+          height = "370px"
+        )
+      )
+    }
+  )
+)
+
+```
+
+
+
+
+
+
+
+
+
