@@ -1,0 +1,96 @@
+---
+title: "Tableau de bord dépôts Antares"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: cosmo
+    css: ["assets/stylesheets/theme-antares.min.css"]
+    orientation: rows
+    vertical_layout: fill
+params:
+  maj: FALSE
+---
+
+<style>
+
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+  color: #112446;
+}
+</style>
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(formattable)
+
+if (isTRUE(params$maj)) {
+  source("scripts/gh-infos.R")
+}
+
+org_pkg <- readRDS("datas/org_pkg.rds")
+org <- attr(org_pkg, "organization", exact = TRUE)
+titles <- attr(org_pkg, "titles", exact = TRUE)
+date_maj <- attr(org_pkg, "date_maj", exact = TRUE)
+```
+
+Dernière mise à jour : `r date_maj`
+
+Row
+-----------------------------------------------------------------------
+
+### Dépôts GitHub
+
+```{r}
+valueBox(nrow(org_pkg), icon = "fa-github")
+```
+
+### Packages sur le CRAN
+
+```{r}
+valueBox(sum(org_pkg$on_cran), icon = "fa-box-open")
+```
+
+### Dépôts mis à jour sur le dernier mois
+
+```{r}
+valueBox(sum(org_pkg$last_commit > seq(Sys.Date(), by = "-1 month", length = 2)[2]), icon = "fa-calendar")
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Liste des dépôts GitHub
+
+```{r}
+org_pkg <- org_pkg[order(org_pkg$last_commit, decreasing = TRUE), ]
+rownames(org_pkg) <- NULL
+
+org_pkg$last_month_downloads <- format(org_pkg$last_month_downloads, big.mark = " ", trim = TRUE)
+org_pkg$total_downloads <- format(org_pkg$total_downloads, big.mark = " ", trim = TRUE)
+
+org_pkg$last_month_downloads[org_pkg$last_month_downloads == "NA"] <- ""
+org_pkg$total_downloads[org_pkg$total_downloads == "NA"] <- ""
+
+tab <- formattable(
+  org_pkg,
+  formatters = list(
+    name = formatter("a", style = style(font.weight = "bold"),
+                     href = x ~ paste0("https://github.com/", org, "/", x),
+                     title = titles),
+    commits = color_tile("white", "green"),
+    last_commit = color_tile("white", "lightblue"),
+    open_pr = formatter("span", style = x ~ ifelse(x > 0, style(color = "red", font.weight = "bold"), NA)),
+    open_issues = formatter("span",
+                            style = x ~ ifelse(x > 0, style(color = "orange", font.weight = "bold"), NA)),
+    on_cran = formatter("span",
+                        style = x ~ style(color = ifelse(x, "green", "red")),
+                        x ~ icontext(ifelse(x, "ok", "remove")))
+  ),
+  col.names = c("Nom", "Commits", "Dernier commit",
+                "PR ouvertes", "PR fermées", "Issues ouvertes", "Issues fermées",
+                "CRAN", "Téléchargements dernier mois", "Total téléchargements",
+                "Nb contributeurs", "Contributeurs")
+)
+
+tab
+# as.datatable(tab, options = list(dom = "t", paginate = FALSE), rownames = FALSE)
+```
+
