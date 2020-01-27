@@ -16,7 +16,7 @@ create_theme(
   bs_vars_global(body_bg = "#FFF", text_color = "#808488"),
   bs_vars_font(family_sans_serif = "Roboto,sans-serif", size_base = "16px"),
   bs_vars_navbar(
-    height = "80px",
+    # height = "80px",
     default_bg = "#FFF",
     default_color = "#112446",
     default_link_color = "#112446",

@@ -2,6 +2,7 @@
 title: "Tableau de bord dépôts Antares"
 output: 
   flexdashboard::flex_dashboard:
+    self_contained: false
     theme: cosmo
     css: ["assets/stylesheets/theme-antares.min.css"]
     orientation: rows
@@ -11,9 +12,11 @@ params:
 ---
 
 <style>
-
 .navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
   color: #112446;
+}
+.value-box .icon i {
+  color: #FFF !important;
 }
 </style>
 
