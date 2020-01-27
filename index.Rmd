@@ -127,7 +127,7 @@ packages <- yaml.load_file("packages.yml")
 
 fluidRow(
   lapply(
-    X = packages$packages,
+    X = packages$english,
     FUN = function(package) {
       column(
         width = 4,
