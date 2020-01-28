@@ -48,7 +48,7 @@ french:
   - name: antaresProcessing
     title: Traitement des résultats 'Antares'
     link: https://github.com/rte-antares-rpackage/antaresProcessing
-    description: Traiter les résultats Antares. Ce package permet notamment de créer des nouvelles colonnes telle que la charge nette, les facteurs de charge, les marges ascendantes et descendantes. Il facilite également le calcul de statistiques agrégées telles que les surplus économiques des consommateurs, producteurs et secteurs.
+    description: Traiter les résultats Antares. Ce package permet notamment de créer des nouvelles colonnes telle que la charge nette, les facteurs de charge, les marges ascendantes et descendantes. Il facilite également le calcul de statistiques agrégées.
     image: BLA
   - name: antaresViz
     title: Visualisations 'Antares'

@@ -126,10 +126,16 @@ particlesjs::particles(
 
 
 
-```{r packages, results='asis'}
+```{r packages}
 packages <- yaml.load_file("packages.yml")
+```
 
 
+# {.tabset .tabset-fade .tabset-pills}
+
+## English
+
+```{r, results='asis'}
 fluidRow(
   lapply(
     X = packages$english,
@@ -147,14 +153,30 @@ fluidRow(
     }
   )
 )
-
 ```
 
 
+## French
 
-
-
-
+```{r, results='asis'}
+fluidRow(
+  lapply(
+    X = packages$french,
+    FUN = function(package) {
+      column(
+        width = 4,
+        thumbnail(
+          title = package$name, 
+          content = package$description, 
+          href = package$link,
+          media = tags$img(src = paste0("images/", package$image)), 
+          height = "370px"
+        )
+      )
+    }
+  )
+)
+```
 
 
 
