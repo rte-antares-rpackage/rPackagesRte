@@ -68,6 +68,7 @@ body {
   position: relative;
   padding: 0px;
   margin-bottom: 20px;
+  overflow: auto;
 }
 
 .thumbnail img {
@@ -75,6 +76,22 @@ body {
   height: 210px;
   object-fit: contain;
 }
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+  color: #000;
+  background-color: #FFF;
+}
+
+.nav-pills>li>a {
+  border-radius: 4px;
+  color: #FFF;
+  border: 1px solid #FFF;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+  color: #000;
+}
+
 ```
 
 
@@ -133,7 +150,7 @@ packages <- yaml.load_file("packages.yml")
 
 # {.tabset .tabset-fade .tabset-pills}
 
-## English
+## <span> <img src="assets/flags/gb.svg" width="16" height="12" style="vertical-align: 0px;"/>EN</span>
 
 ```{r, results='asis'}
 fluidRow(
@@ -141,13 +158,13 @@ fluidRow(
     X = packages$english,
     FUN = function(package) {
       column(
-        width = 4,
+        width = 3,
         thumbnail(
           title = package$name, 
           content = package$description, 
           href = package$link,
           media = tags$img(src = paste0("images/", package$image)), 
-          height = "370px"
+          height = "420px"
         )
       )
     }
@@ -156,7 +173,7 @@ fluidRow(
 ```
 
 
-## French
+## <span> <img src="assets/flags/fr.svg" width="16" height="12" style="vertical-align: 0px;"/>FR</span>
 
 ```{r, results='asis'}
 fluidRow(
@@ -164,13 +181,13 @@ fluidRow(
     X = packages$french,
     FUN = function(package) {
       column(
-        width = 4,
+        width = 3,
         thumbnail(
           title = package$name, 
           content = package$description, 
           href = package$link,
           media = tags$img(src = paste0("images/", package$image)), 
-          height = "370px"
+          height = "420px"
         )
       )
     }
