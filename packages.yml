@@ -39,4 +39,44 @@ english:
     link: https://github.com/rte-antares-rpackage/antaresThermalTS
     description: Setup an 'Antares' study to simulate shutdown of power groups.
     image: BLA
-
+french:
+  - name: antaresRead
+    title: Importer, manipuler et explorer les résultats d'une simulation 'Antares'
+    link: https://rte-antares-rpackage.github.io/antaresRead/index.html
+    description: Importer, manipuler et explorer les résultats d'une simulation Antares.
+    image: antaresRead.png
+  - name: antaresEditObject
+    title: Modifier une simulation 'Antares'
+    link: https://rte-antares-rpackage.github.io/antaresEditObject/index.html
+    description: Modifier une étude Antares avant de lancer une simulation. Les méthodes fournies permettent notamment de créer et de supprimer les zones, les liens entre elles, les clusters thermiques et les contraintes couplantes.
+    image: BLA
+  - name: antaresProcessing
+    title: Traitement des résultats 'Antares'
+    link: https://github.com/rte-antares-rpackage/antaresProcessing
+    description: Traiter les résultats Antares. Ce package permet notamment de créer des nouvelles colonnes telle que la charge nette, les facteurs de charge, les marges ascendantes et descendantes. Il facilite également le calcul de statistiques agrégées telles que les surplus économiques des consommateurs, producteurs et secteurs.
+    image: BLA
+  - name: antaresViz
+    title: Visualisations 'Antares'
+    link: https://rte-antares-rpackage.github.io/antaresViz/index.html
+    description: Visualiser les résultats générés par Antares. Les fonctions fournies permettent de créer des graphiques interactifs qui permettent d'explorer les résultats des simulations.
+    image: BLA
+  - name: antaresXpansion
+    title: Outil de planification pour 'Antares'
+    link: https://github.com/rte-antares-rpackage/antaresXpansion
+    description: Déterminer l'investissement optimal et les décisions de désactivation dans une étude Antares.
+    image: BLA
+  - name: antaresFlowbased
+    title: Exécuter des simulations FlowBased dans Antares
+    link: https://github.com/rte-antares-rpackage/antaresFlowbased
+    description: Exécuter des simulations FlowBased dans Antares.
+    image: BLA
+  - name: antaresWaterValues
+    title: Calculer les valeurs de l'eau
+    link: https://rte-antares-rpackage.github.io/antaresWaterValues/index.html
+    description: Calculer les valeurs de l'eau à utiliser dans Antares. Ce package permet de lancer des simulations spécifiques dans Antares depuis R, et, à partir des résultats, de calculer les valeurs de Bellman et valeurs de l'eau pour chaque niveau de stock et chaque semaine.
+    image: BLA
+  - name: antaresThermalTS
+    title: Simulation de fermetures de centrales pour 'Antares'
+    link: https://github.com/rte-antares-rpackage/antaresThermalTS
+    description: Créer une étude 'Antares' pour simuler la fermeture de centrales.
+    image: BLA
