@@ -8,7 +8,7 @@ english:
     title: Edit an 'Antares' Simulation
     link: https://rte-antares-rpackage.github.io/antaresEditObject/index.html
     description: Edit an Antares study before running a simulation. Methods are provided to create (and remove) areas, links between them, thermal cluster and binding constraints.
-    image: BLA
+    image: antaresEditObject.png
   - name: antaresProcessing
     title: Antares Results Processing
     link: https://github.com/rte-antares-rpackage/antaresProcessing
@@ -44,7 +44,7 @@ french:
     title: Modifier une simulation 'Antares'
     link: https://rte-antares-rpackage.github.io/antaresEditObject/index.html
     description: Modifier une étude Antares avant de lancer une simulation. Les méthodes fournies permettent notamment de créer et de supprimer les zones, les liens entre elles, les clusters thermiques et les contraintes couplantes.
-    image: BLA
+    image: antaresEditObject.png
   - name: antaresProcessing
     title: Traitement des résultats 'Antares'
     link: https://github.com/rte-antares-rpackage/antaresProcessing
