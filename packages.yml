@@ -24,11 +24,6 @@ english:
     link: https://github.com/rte-antares-rpackage/antaresXpansion
     description: Compute optimal investment and decommissioning decisions in an Antares study.
     image: BLA
-  - name: antaresFlowbased
-    title: Run FlowBased Simulations on Antares
-    link: https://github.com/rte-antares-rpackage/antaresFlowbased
-    description: Run FlowBased simulations on Antares.
-    image: BLA
   - name: antaresWaterValues
     title: Calculate Water Values
     link: https://rte-antares-rpackage.github.io/antaresWaterValues/index.html
@@ -59,11 +54,6 @@ french:
     title: Outil de planification pour 'Antares'
     link: https://github.com/rte-antares-rpackage/antaresXpansion
     description: Déterminer l'investissement optimal et les décisions de désactivation dans une étude Antares.
-    image: BLA
-  - name: antaresFlowbased
-    title: Exécuter des simulations FlowBased dans Antares
-    link: https://github.com/rte-antares-rpackage/antaresFlowbased
-    description: Exécuter des simulations FlowBased dans Antares.
     image: BLA
   - name: antaresWaterValues
     title: Calculer les valeurs de l'eau
