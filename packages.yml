@@ -24,6 +24,16 @@ english:
     link: https://rte-antares-rpackage.github.io/antaresWaterValues/index.html
     description: Compute water values to use in Antares. This package allows to run specific simulations in Antares from within R, and to use the results of these simulations to compute Bellman values and water values for each stock level and each week of the year.
     image: antaresWaterValues.png
+  - name: fbClust
+    title: Cluster historical FB domains
+    link: https://github.com/rte-antares-rpackage/fbClust
+    description: This package allows to analyse a database of Flow-Based domains and to cluster and extract the most representative domains to be applied to an Antares study, as well as probability matrices to allocate the domains on prospective studies.
+    image: fbclust.png
+  - name: fbAntares
+    title: Introduce FB domains in Antares
+    link: https://github.com/rte-antares-rpackage/fbAntares
+    description: This package allows to add Flow-Based domains as binding constraints in Antares. It also provides a method to reduce the complexity of Flow-Based domains, and visualization functions.
+    image: fbantares.png
 french:
   - name: antaresRead
     title: Importer, manipuler et explorer les résultats d'une simulation 'Antares'
@@ -50,3 +60,13 @@ french:
     link: https://rte-antares-rpackage.github.io/antaresWaterValues/index.html
     description: Calculer les valeurs de l'eau à utiliser dans Antares. Ce package permet de lancer des simulations spécifiques dans Antares depuis R, et, à partir des résultats, de calculer les valeurs de Bellman et valeurs de l'eau pour chaque niveau de stock et chaque semaine.
     image: antaresWaterValues.png
+  - name: fbClust
+    title: Clusteriser des domaines FB historiques
+    link: https://github.com/rte-antares-rpackage/fbClust
+    description: Ce package permet d'analyser une base de données de domaines Flow-Based, de les clusteriser et d'extraire les domaines les plus représentatifs pour les utiliser dans des études Antares, ainsi que des matrices de proabailité pour allouer ces domaines à des études prospectives.
+    image: fbclust.png
+  - name: fbAntares
+    title: Introduire des domaines FB dans Antares
+    link: https://github.com/rte-antares-rpackage/fbAntares
+    description: Ce package permet d'ajouter des domaines Flow-Based dans Antares en tant que contraintes couplantes. Il fournit aussi une méthode pour réduire la complexité des domaines, et des fonctions de visualisation.
+    image: fbantares.png
