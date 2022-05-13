@@ -153,7 +153,7 @@ packages <- yaml.load_file("packages.yml")
 ## <span> <img src="assets/flags/gb.svg" width="16" height="12" style="vertical-align: 0px;"/>EN</span>
 
 <p style = "text-align: center; color: #FFF;">
-Find here all the R packages developed by Rte around Antares. 
+Find here the most popular R packages developed by Rte around Antares. 
 You can edit a study, read simulation results and visualize them!
 </p>
 
@@ -181,7 +181,7 @@ fluidRow(
 ## <span> <img src="assets/flags/fr.svg" width="16" height="12" style="vertical-align: 0px;"/>FR</span>
 
 <p style = "text-align: center; color: #FFF;">
-Retouvez ici tous les packages R développés par Rte autour d'Antares. 
+Retouvez ici les packages R les plus populaires développés par Rte autour d'Antares. 
 Vous pouvez éditer une étude, lire les résultats de simulations et les visualiser !
 </p>
 
