@@ -34,6 +34,11 @@ english:
     link: https://github.com/rte-antares-rpackage/fbAntares
     description: This package allows to add Flow-Based domains as binding constraints in Antares. It also provides a method to reduce the complexity of Flow-Based domains, and visualization functions.
     image: fbantares.png
+  - name: antaresAdequacyPatch
+    title: Apply the adequacy patch to Antares results
+    link: https://github.com/rte-antares-rpackage/antaresAdequacyPatch
+    description: This package allows to post-process the results of an Antares simulation to apply the adequacy patch, which is the set of curtailment sharing rules implemented in the Euphemia market algorithm.
+    image: adequacypatch.png
 french:
   - name: antaresRead
     title: Importer, manipuler et explorer les résultats d'une simulation 'Antares'
@@ -70,3 +75,8 @@ french:
     link: https://github.com/rte-antares-rpackage/fbAntares
     description: Ce package permet d'ajouter des domaines Flow-Based dans Antares en tant que contraintes couplantes. Il fournit aussi une méthode pour réduire la complexité des domaines, et des fonctions de visualisation.
     image: fbantares.png
+  - name: antaresAdequacyPatch
+    title: Appliquer l'adequacy patch aux résultats d'une étude Antares.
+    link: https://github.com/rte-antares-rpackage/antaresAdequacyPatch
+    description: Ce package permet de post-traiter les résultats d'une simulation Antares pour y appliquer l'adequacy patch, qui est l'ensemble des règles de partage de la défaillance implémenté dans l'algorithme marché Euphemia.
+    image: adequacypatch.png
