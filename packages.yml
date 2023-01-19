@@ -21,7 +21,7 @@ english:
     image: antaresViz.jpg
   - name: antaresWaterValues
     title: Calculate Water Values
-    link: https://rte-antares-rpackage.github.io/antaresWaterValues/index.html
+    link: https://github.com/rte-antares-rpackage/antaresWaterValues
     description: Compute water values to use in Antares. This package allows to run specific simulations in Antares from within R, and to use the results of these simulations to compute Bellman values and water values for each stock level and each week of the year.
     image: antaresWaterValues.png
   - name: fbClust
@@ -62,7 +62,7 @@ french:
     image: antaresViz.jpg
   - name: antaresWaterValues
     title: Calculer les valeurs de l'eau
-    link: https://rte-antares-rpackage.github.io/antaresWaterValues/index.html
+    link: https://github.com/rte-antares-rpackage/antaresWaterValues
     description: Calculer les valeurs de l'eau à utiliser dans Antares. Ce package permet de lancer des simulations spécifiques dans Antares depuis R, et, à partir des résultats, de calculer les valeurs de Bellman et valeurs de l'eau pour chaque niveau de stock et chaque semaine.
     image: antaresWaterValues.png
   - name: fbClust

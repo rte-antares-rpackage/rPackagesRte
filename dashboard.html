@@ -21,12 +21,22 @@
 window.FlexDashboardComponents = [];
 </script>
 
-<script src="dashboard_files/jquery-1.11.3/jquery.min.js"></script>
+<script src="dashboard_files/header-attrs-2.13/header-attrs.js"></script>
+<script src="dashboard_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="dashboard_files/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="dashboard_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="dashboard_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="dashboard_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="dashboard_files/stickytableheaders-0.1.19/jquery.stickytableheaders.min.js"></script>
 <link href="dashboard_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="dashboard_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
@@ -844,7 +854,8 @@ var FlexDashboard = (function () {
       defaultFigWidthMobile: 360,
       defaultFigHeightMobile: 461,
       isMobile: false,
-      isPortrait: false
+      isPortrait: false,
+      resize_reload: true
     });
   };
 
@@ -897,9 +908,9 @@ var FlexDashboard = (function () {
         globalSidebar.addClass('level3');
         var h1 = globalSidebar.children('h1');
         var h3 = $('<h3></h3>');
-        h3.html(h1.html());
+        h3.append(h1.contents());
         h3.insertBefore(h1);
-        h1.remove();
+        h1.detach();
 
         // move it into the first page
         var page = dashboardContainer.find('.section.level1').first();
@@ -964,16 +975,29 @@ var FlexDashboard = (function () {
     initPrismHighlighting();
 
     // record mobile and orientation state then register a handler
-    // to refresh if it changes
+    // to refresh if resize_reload is set to true and it changes
     _options.isMobile = isMobilePhone();
     _options.isPortrait = isPortrait();
-    $(window).on('resize', function() {
-      if (_options.isMobile !== isMobilePhone() ||
-          _options.isPortrait !== isPortrait()) {
-        window.location.reload();
+    if (_options.resize_reload) {
+      $(window).on('resize', function() {
+        if (_options.isMobile !== isMobilePhone() ||
+            _options.isPortrait !== isPortrait()) {
+          window.location.reload();
+        }
+      });
+    } else {
+      // if in desktop mode and resizing to mobile, make sure the heights are 100%
+      // This enforces what `fillpage.css` does for "wider" pages.
+      // Since we are not reloading once the page becomes small, we need to force the height to 100%
+      // This is a new situation introduced when `_options.resize_reload` is `false`
+      if (! _options.isMobile) {
+        // only add if `fillpage.css` was added in the first place
+        if (_options.fillPage) {
+          // fillpage.css
+          $("html,body,#dashboard").css("height", "100%");
+        }
       }
-    });
-
+    }
     // trigger layoutcomplete event
     dashboardContainer.trigger('flexdashboard:layoutcomplete');
   }
@@ -1085,10 +1109,10 @@ var FlexDashboard = (function () {
     if (active)
       wrapper.addClass('active');
 
-    // get a reference to the h1, discover it's id and title, then remove it
+    // get a reference to the h1, discover its inner contens, then detach it
     var h1 = wrapper.find('h1').first();
-    var title = h1.html();
-    h1.remove();
+    var title = h1.contents();
+    h1.detach();
 
     // create a navbar item
     var li = $('<li></li>');
@@ -1118,7 +1142,14 @@ var FlexDashboard = (function () {
 
       // get the name of the icon set and icon
       var dashPos = icon.indexOf("-");
-      var iconSet = icon.substring(0, dashPos);
+      var iconSet = null;
+      var iconSplit = icon.split(" ");
+      if (iconSplit.length > 1) {
+        iconSet = iconSplit[0];
+        icon = iconSplit.slice(1).join(" ");
+      } else {
+        iconSet = icon.substring(0, dashPos);
+      }
       var iconName = icon.substring(dashPos + 1);
 
       // create the icon
@@ -1219,9 +1250,9 @@ var FlexDashboard = (function () {
       sidebar.wrapInner('<div class="section level3"></div>');
       var h2 = sidebar.find('h2');
       var h3 = $('<h3></h3>');
-      h3.html(h2.html());
+      h3.append(h2.contents());
       h3.insertBefore(h2);
-      h2.remove();
+      h2.detach();
 
       // wipeout h2 elements then enclose them in a single h2
       var level2 = page.find('div.section.level2');
@@ -1363,8 +1394,8 @@ var FlexDashboard = (function () {
       // extract the title from the h3
       var li = $('<li></li>');
       var h3 = frame.children('h3');
-      li.html(h3.html());
-      h3.remove();
+      li.append(h3.contents());
+      h3.detach();
       ul.append(li);
 
       // extract commentary
@@ -1760,7 +1791,7 @@ var FlexDashboard = (function () {
 
     // add the title
     var chartTitle = $('<div class="chart-title"></div>');
-    chartTitle.html(title);
+    chartTitle.append(title);
     chart.prepend(chartTitle);
 
     // add the notes section
@@ -1816,10 +1847,11 @@ var FlexDashboard = (function () {
 
       // get the heading element within it and grab it's text
       var heading = tab.find('h' + tabLevel + ':first');
-      var headingText = heading.html();
+      var headingDom = heading.contents();
 
       // build and append the tab list item
-      var a = $('<a role="tab" data-toggle="tab">' + headingText + '</a>');
+      var a = $('<a role="tab" data-toggle="tab"></a>');
+      a.append(headingDom);
       a.attr('href', '#' + id);
       a.attr('aria-controls', id);
       var li = $('<li role="presentation"></li>');
@@ -1942,8 +1974,8 @@ var FlexDashboard = (function () {
     var h3 = container.children('h3').first();
     var title = '';
     if (!container.hasClass('no-title'))
-      title = h3.html();
-    h3.remove();
+      title = h3.contents();
+    h3.detach();
     return title;
   }
 
@@ -1954,11 +1986,11 @@ var FlexDashboard = (function () {
     var caption = chartContent.children('div.image-container')
                               .children('p.caption');
     if (blockquote.length) {
-      chartNotes.html(blockquote.children('p:first-child').html());
+      chartNotes.empty().append(blockquote.children('p:first-child').contents());
       blockquote.remove();
       return true;
     } else if (caption.length) {
-      chartNotes.html(caption.html());
+      chartNotes.empty().append(caption.contents());
       caption.remove();
       return true;
     } else {
@@ -2018,14 +2050,14 @@ var FlexDashboard = (function () {
   function handleLocationHash() {
 
     // restore tab/page from bookmark
-    var hash = window.location.hash;
+    var hash = window.decodeURIComponent(window.location.hash);
     if (hash.length > 0)
       $('ul.nav a[href="' + hash + '"]').tab('show');
     FlexDashboardUtils.manageActiveNavbarMenu();
 
     // navigate to a tab when the history changes
     window.addEventListener("popstate", function(e) {
-      var hash = window.location.hash;
+      var hash = window.decodeURIComponent(window.location.hash);
       var activeTab = $('ul.nav a[href="' + hash + '"]');
       if (activeTab.length) {
         activeTab.tab('show');
@@ -2488,7 +2520,7 @@ window.FlexDashboardComponents.push({
 
     // caption
     var caption = $('<p class="caption"></p>');
-    caption.html(chartTitle);
+    caption.append(chartTitle);
 
     // build inner div for value box and add it
     var inner = $('<div class="inner"></div>');
@@ -2501,9 +2533,15 @@ window.FlexDashboardComponents.push({
     valueBox.append(icon);
     function setIcon(chartIcon) {
       var iconLib = "";
-      var components = chartIcon.split("-");
-      if (components.length > 1)
-        iconLib = components[0];
+      var iconSplit = chartIcon.split(" ");
+      if (iconSplit.length > 1) {
+        iconLib = iconSplit[0];
+        chartIcon = iconSplit.slice(1).join(" ");
+      } else {
+        var components = chartIcon.split("-");
+        if (components.length > 1)
+          iconLib = components[0];
+      }
       icon.children('i').attr('class', iconLib + ' ' + chartIcon);
     }
     var chartIcon = valueBox.attr('data-icon');
@@ -2583,8 +2621,6 @@ window.FlexDashboardComponents.push({
     );
   }
 });
-
-
 </script>
 
 <div id="dashboard-container">
@@ -2597,7 +2633,7 @@ window.FlexDashboardComponents.push({
   color: #FFF !important;
 }
 </style>
-<p>Dernière mise à jour : 2020-01-27</p>
+<p>Dernière mise à jour : 2022-05-16</p>
 <div id="row" class="section level2">
 <h2>Row</h2>
 <div id="dépôts-github" class="section level3">
@@ -2605,21 +2641,21 @@ window.FlexDashboardComponents.push({
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
-<span class="value-output" data-icon="fa-github">31</span>
+<p><span class="value-output" data-icon="fa-github">32</span></p>
 </div>
 <div id="packages-sur-le-cran" class="section level3">
 <h3>Packages sur le CRAN</h3>
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
-<span class="value-output" data-icon="fa-box-open">7</span>
+<p><span class="value-output" data-icon="fa-box-open">7</span></p>
 </div>
 <div id="dépôts-mis-à-jour-sur-le-dernier-mois" class="section level3">
 <h3>Dépôts mis à jour sur le dernier mois</h3>
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
-<span class="value-output" data-icon="fa-calendar">4</span>
+<p><span class="value-output" data-icon="fa-calendar">3</span></p>
 </div>
 </div>
 <div id="row-1" class="section level2">
@@ -2673,357 +2709,21 @@ Contributeurs
 <tbody>
 <tr>
 <td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresThermalTS" title="clean and validate entsoe datasets">antaresThermalTS </a>
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/rPackagesRte" title="clean and validate entsoe datasets">rPackagesRte </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #efffef">54</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f8fff8">24</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #add8e6">2020-01-15</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-2
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #add8e6">2022-05-16</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
-</td>
-<td style="text-align:right;">
-0
-</td>
-<td style="text-align:right;">
-<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:right;">
-pvictor, FabiolaAravena
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresEditObject">antaresEditObject </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d6ffd6">140</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #add8e6">2020-01-13</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-19
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
-</td>
-<td style="text-align:right;">
-648
-</td>
-<td style="text-align:right;">
-7 632
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-pvictor, jalazawa, baptsegu, bthieurmel, etienne-s, cderv, TitouanRobert
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/manipulateWidget" title="Tools for Antares package developers">manipulateWidget </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #a0ffa0">329</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #add8e6">2020-01-13</span>
-</td>
-<td style="text-align:right;">
-<span style="color: red; font-weight: bold">1</span>
-</td>
-<td style="text-align:right;">
-16
-</td>
-<td style="text-align:right;">
-<span style="color: orange; font-weight: bold">14</span>
-</td>
-<td style="text-align:right;">
-33
-</td>
-<td style="text-align:right;">
-<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
-</td>
-<td style="text-align:right;">
-40 956
-</td>
-<td style="text-align:right;">
-1 100 651
-</td>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:right;">
-FrancoisGuillem, bthieurmel, jalazawa, dmurdoch, cderv, TitouanRobert, jjallaire, pvictor
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresRead" title="Edit an &#39;Antares&#39; Simulation">antaresRead </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #1fff1f">774</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #add8e6">2020-01-06</span>
-</td>
-<td style="text-align:right;">
-<span style="color: red; font-weight: bold">1</span>
-</td>
-<td style="text-align:right;">
-50
-</td>
-<td style="text-align:right;">
-<span style="color: orange; font-weight: bold">21</span>
-</td>
-<td style="text-align:right;">
-78
-</td>
-<td style="text-align:right;">
-<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
-</td>
-<td style="text-align:right;">
-771
-</td>
-<td style="text-align:right;">
-34 614
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-FrancoisGuillem, jalazawa, TitouanRobert, bthieurmel, pvictor, baptsegu, etienne-s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/leaflet.minicharts" title="Run FlowBased Simulations on Antares">leaflet.minicharts </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #e0ffe0">108</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #afd9e6">2019-12-16</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-<span style="color: orange; font-weight: bold">11</span>
-</td>
-<td style="text-align:right;">
-14
-</td>
-<td style="text-align:right;">
-<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
-</td>
-<td style="text-align:right;">
-1 052
-</td>
-<td style="text-align:right;">
-28 030
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:right;">
-FrancoisGuillem, bthieurmel, jalazawa, pvictor
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresWaterValues" title="Use h5 files for antares">antaresWaterValues </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #efffef">55</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b0d9e7">2019-11-29</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-<span style="color: orange; font-weight: bold">1</span>
-</td>
-<td style="text-align:right;">
-0
-</td>
-<td style="text-align:right;">
-<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-pvictor
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/spMaps">spMaps </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f1fff1">48</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b0d9e7">2019-11-27</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:right;">
-<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
-</td>
-<td style="text-align:right;">
-496
-</td>
-<td style="text-align:right;">
-7 621
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:right;">
-jalazawa, bthieurmel, TitouanRobert, pvictor
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/rPackagesRte" title="&#39;Antares&#39; Results Processing">rPackagesRte </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fdfffd">6</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b0d9e7">2019-11-26</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-0
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-0
-</td>
-<td style="text-align:right;">
-<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:right;">
-jalazawa, pvictor
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresViz" title="Import, Manipulate and Explore the Results of an &#39;Antares&#39; Simulation">antaresViz </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #15ff15">808</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b2dae7">2019-11-07</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-19
-</td>
-<td style="text-align:right;">
-<span style="color: orange; font-weight: bold">34</span>
-</td>
-<td style="text-align:right;">
-124
-</td>
-<td style="text-align:right;">
-<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
-</td>
-<td style="text-align:right;">
-527
-</td>
-<td style="text-align:right;">
-18 365
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:right;">
-FrancoisGuillem, TitouanRobert, jalazawa, bthieurmel, pvictor, baptsegu
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/leaflet.flow" title="Extended Shutdown Simulation with &#39;Antares&#39; for Power Groups">leaflet.flow </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fcfffc">12</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b2dae7">2019-11-07</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:right;">
 <span>0</span>
 </td>
 <td style="text-align:right;">
@@ -3040,7 +2740,7 @@ FrancoisGuillem, TitouanRobert, jalazawa, bthieurmel, pvictor, baptsegu
 3
 </td>
 <td style="text-align:right;">
-bthieurmel, FrancoisGuillem, jalazawa
+pvictor, PPlessiez, jalazawa
 </td>
 </tr>
 <tr>
@@ -3048,16 +2748,16 @@ bthieurmel, FrancoisGuillem, jalazawa
 <a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresVizMedTSO">antaresVizMedTSO </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #00ff00">881</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #00ff00">903</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b4dbe8">2019-10-14</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #add8e6">2022-04-25</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
 </td>
 <td style="text-align:right;">
-0
+1
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3081,49 +2781,51 @@ FrancoisGuillem, bthieurmel, TitouanRobert, jalazawa, elias1692, baptsegu
 </tr>
 <tr>
 <td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/fbAntares" title="Antares Visualizations">fbAntares </a>
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresEditObject" title="Applies the Adequacy Patch Curtailment Sharing Rules to an Antares Study">antaresEditObject </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #e1ffe1">105</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #a4ffa4">323</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b6dce8">2019-09-17</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #aed8e6">2022-04-21</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
 </td>
 <td style="text-align:right;">
-0
+28
 </td>
 <td style="text-align:right;">
-<span style="color: orange; font-weight: bold">12</span>
+<span style="color: orange; font-weight: bold">8</span>
 </td>
 <td style="text-align:right;">
-8
+14
 </td>
 <td style="text-align:right;">
-<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
 </td>
 <td style="text-align:right;">
+460
 </td>
 <td style="text-align:right;">
+24 757
 </td>
 <td style="text-align:right;">
-3
+10
 </td>
 <td style="text-align:right;">
-JulienBretteville, TitouanRobert, baptsegu
+pvictor, TitouanRobert, jalazawa, bthieurmel, PPlessiez, baptsegu, etienne-s, cderv, pl-buiquang, janusdebondt
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/fbClust" title="Antares Visualizations">fbClust </a>
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/fbClust" title="Tools for Antares package developers">fbClust </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d2ffd2">156</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d1ffd1">163</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b7dce9">2019-09-05</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #aed8e6">2022-04-01</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3145,33 +2847,185 @@ JulienBretteville, TitouanRobert, baptsegu
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-3
+4
 </td>
 <td style="text-align:right;">
-JulienBretteville, TitouanRobert, baptsegu
+JulienBretteville, TitouanRobert, PPlessiez, baptsegu
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresFlowbased" title="Calculate Water Values">antaresFlowbased </a>
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresRead" title="Edit an &#39;Antares&#39; Simulation">antaresRead </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #7eff7e">444</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #11ff11">842</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b8dde9">2019-08-12</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #aed8e6">2022-03-31</span>
+</td>
+<td style="text-align:right;">
+<span style="color: red; font-weight: bold">1</span>
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">24</span>
+</td>
+<td style="text-align:right;">
+84
+</td>
+<td style="text-align:right;">
+<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+693
+</td>
+<td style="text-align:right;">
+59 284
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+FrancoisGuillem, jalazawa, TitouanRobert, bthieurmel, pvictor, baptsegu, PPlessiez, etienne-s, janusdebondt
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresViz" title="Run FlowBased Simulations on Antares">antaresViz </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #09ff09">870</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b4dbe8">2021-11-24</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
 </td>
 <td style="text-align:right;">
-4
+28
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">37</span>
+</td>
+<td style="text-align:right;">
+125
+</td>
+<td style="text-align:right;">
+<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+567
+</td>
+<td style="text-align:right;">
+39 565
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+FrancoisGuillem, TitouanRobert, jalazawa, bthieurmel, pvictor, vcrtei, PPlessiez, baptsegu, cpsievert
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresProcessing" title="Use h5 files for antares">antaresProcessing </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #8eff8e">401</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b5dbe8">2021-11-05</span>
+</td>
+<td style="text-align:right;">
+<span style="color: red; font-weight: bold">1</span>
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">5</span>
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+585
+</td>
+<td style="text-align:right;">
+46 880
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+jalazawa, FrancoisGuillem, TitouanRobert, bthieurmel, pvictor, PPlessiez
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/manipulateWidget">manipulateWidget </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #89ff89">416</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b6dce8">2021-10-05</span>
+</td>
+<td style="text-align:right;">
+<span style="color: red; font-weight: bold">1</span>
+</td>
+<td style="text-align:right;">
+17
 </td>
 <td style="text-align:right;">
 <span style="color: orange; font-weight: bold">16</span>
 </td>
 <td style="text-align:right;">
-50
+36
+</td>
+<td style="text-align:right;">
+<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+8 768
+</td>
+<td style="text-align:right;">
+2 260 404
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+FrancoisGuillem, bthieurmel, jalazawa, dmurdoch, pvictor, cderv, TitouanRobert, jjallaire
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/leaflet.flow" title="&#39;Antares&#39; Results Processing">leaflet.flow </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fbfffb">16</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #bbdeea">2021-06-10</span>
+</td>
+<td style="text-align:right;">
+<span style="color: red; font-weight: bold">3</span>
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+0
 </td>
 <td style="text-align:right;">
 <span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
@@ -3184,30 +3038,68 @@ JulienBretteville, TitouanRobert, baptsegu
 4
 </td>
 <td style="text-align:right;">
-TitouanRobert, MarionLi0, bthieurmel, baptsegu
+bthieurmel, FrancoisGuillem, jalazawa, dependabot[bot]
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresWeeklyMargin" title="Setup an &#39;Antares&#39; Study for Weekly Margin Simulation">antaresWeeklyMargin </a>
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/leaflet.minicharts" title="Import, Manipulate and Explore the Results of an &#39;Antares&#39; Simulation">leaflet.minicharts </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b7ffb7">248</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #dbffdb">129</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #badeea">2019-07-24</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #bbdeea">2021-06-10</span>
 </td>
 <td style="text-align:right;">
-<span>0</span>
+<span style="color: red; font-weight: bold">3</span>
 </td>
 <td style="text-align:right;">
-0
+10
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">16</span>
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+1 308
+</td>
+<td style="text-align:right;">
+67 411
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+FrancoisGuillem, bthieurmel, jalazawa, dependabot[bot], pvictor, JulienBretteville, mayeulk
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresAdequacyPatch" title="Extended Shutdown Simulation with &#39;Antares&#39; for Power Groups">antaresAdequacyPatch </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fefffe">5</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #bbdeea">2021-06-08</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+0
 </td>
 <td style="text-align:right;">
 <span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
@@ -3220,30 +3112,30 @@ TitouanRobert, MarionLi0, bthieurmel, baptsegu
 2
 </td>
 <td style="text-align:right;">
-pvictor, FabiolaAravena
+TitouanRobert, bthieurmel
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/fbTools" title="Antares Expansion Planning Tool">fbTools </a>
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/fbAntares">fbAntares </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fbfffb">15</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #e1ffe1">107</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #badeea">2019-07-24</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-0
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #c2e2ec">2020-12-18</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
 </td>
 <td style="text-align:right;">
 0
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">13</span>
+</td>
+<td style="text-align:right;">
+8
 </td>
 <td style="text-align:right;">
 <span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
@@ -3253,93 +3145,21 @@ pvictor, FabiolaAravena
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-3
+4
 </td>
 <td style="text-align:right;">
-TitouanRobert, baptsegu, JulienBretteville
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresXpansion" title="Antares Visualizations">antaresXpansion </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b8ffb8">245</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #bddfeb">2019-06-13</span>
-</td>
-<td style="text-align:right;">
-<span style="color: red; font-weight: bold">2</span>
-</td>
-<td style="text-align:right;">
-0
-</td>
-<td style="text-align:right;">
-<span style="color: orange; font-weight: bold">17</span>
-</td>
-<td style="text-align:right;">
-10
-</td>
-<td style="text-align:right;">
-<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:right;">
-baptsegu, MathildeFranconRTE, klorel, sandbort, jalazawa
+JulienBretteville, TitouanRobert, baptsegu, PPlessiez
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/unavailabilityProductionEntsoe" title="What the Package Does (one line, title case)">unavailabilityProductionEntsoe</a>
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/flowBasedClustering" title="Antares Visualizations">flowBasedClustering </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fcfffc">12</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #c3ffc3">212</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #c2e2ec">2019-04-12</span>
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-0
-</td>
-<td style="text-align:right;">
-<span>0</span>
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:right;">
-TitouanRobert
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/flowBasedClustering" title="A Tool Of Ptdf Manipulation In Order To Cluster And Visualize Domains">flowBasedClustering </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #c2ffc2">211</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #c5e3ed">2019-02-25</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #c4e3ed">2020-11-17</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3369,13 +3189,303 @@ TitouanRobert, baptsegu, bthieurmel
 </tr>
 <tr>
 <td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresME" title="What the Package Does (Title Case)">antaresME </a>
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresFlowbased" title="Antares Visualizations">antaresFlowbased </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f6fff6">30</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #81ff81">445</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d0e8f0">2018-10-15</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #c5e3ed">2020-10-12</span>
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">16</span>
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+TitouanRobert, MarionLi0, bthieurmel, baptsegu
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresThermalTS" title="Calculate Water Values">antaresThermalTS </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #eeffee">60</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #cce6ef">2020-05-13</span>
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">2</span>
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+pvictor, PPlessiez, FabiolaAravena
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresWaterValues" title="Setup an &#39;Antares&#39; Study for Weekly Margin Simulation">antaresWaterValues </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f0fff0">55</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d3eaf1">2019-11-29</span>
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">1</span>
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+pvictor
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/spMaps" title="Antares Expansion Planning Tool">spMaps </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f1fff1">48</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d3eaf1">2019-11-27</span>
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">1</span>
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+355
+</td>
+<td style="text-align:right;">
+20 764
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+jalazawa, bthieurmel, TitouanRobert, pvictor
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresWeeklyMargin" title="Antares Visualizations">antaresWeeklyMargin </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b9ffb9">248</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d8ecf3">2019-07-24</span>
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+pvictor, FabiolaAravena
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/fbTools" title="What the Package Does (one line, title case)">fbTools </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fbfffb">15</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d8ecf3">2019-07-24</span>
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+TitouanRobert, baptsegu, JulienBretteville
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresXpansion" title="A Tool Of Ptdf Manipulation In Order To Cluster And Visualize Domains">antaresXpansion </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #baffba">245</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #daedf3">2019-06-13</span>
+</td>
+<td style="text-align:right;">
+<span style="color: red; font-weight: bold">2</span>
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+<span style="color: orange; font-weight: bold">18</span>
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+baptsegu, MathildeFranconRTE, klorel, sandbort, jalazawa
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/unavailabilityProductionEntsoe" title="What the Package Does (Title Case)">unavailabilityProductionEntsoe</a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fcfffc">12</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ddeef4">2019-04-12</span>
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+<span>0</span>
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+TitouanRobert
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresME" title="Cluster &#39;Flow-Based&#39; Typical Days">antaresME </a>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f7fff7">30</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #e4f2f7">2018-10-15</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3405,51 +3515,13 @@ jalazawa
 </tr>
 <tr>
 <td style="text-align:right;">
-<a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresProcessing" title="Cluster &#39;Flow-Based&#39; Typical Days">antaresProcessing </a>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #8eff8e">390</span>
-</td>
-<td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d1e9f1">2018-09-28</span>
-</td>
-<td style="text-align:right;">
-<span style="color: red; font-weight: bold">2</span>
-</td>
-<td style="text-align:right;">
-19
-</td>
-<td style="text-align:right;">
-<span style="color: orange; font-weight: bold">4</span>
-</td>
-<td style="text-align:right;">
-16
-</td>
-<td style="text-align:right;">
-<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
-</td>
-<td style="text-align:right;">
-587
-</td>
-<td style="text-align:right;">
-25 689
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:right;">
-jalazawa, FrancoisGuillem, TitouanRobert, bthieurmel
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
 <a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaDraft">antaDraft </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #c8ffc8">190</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #c9ffc9">190</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d9edf3">2018-06-13</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #eaf5f8">2018-06-13</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3485,7 +3557,7 @@ davidgohel, jalazawa, FabiolaAravena
 <span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fbfffb">14</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d9edf3">2018-06-13</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #eaf5f8">2018-06-13</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3521,16 +3593,16 @@ jalazawa, FrancoisGuillem
 <span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #e9ffe9">77</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #d9edf3">2018-06-08</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #eaf5f8">2018-06-08</span>
 </td>
 <td style="text-align:right;">
-<span>0</span>
+<span style="color: red; font-weight: bold">1</span>
 </td>
 <td style="text-align:right;">
 0
 </td>
 <td style="text-align:right;">
-<span style="color: orange; font-weight: bold">9</span>
+<span style="color: orange; font-weight: bold">10</span>
 </td>
 <td style="text-align:right;">
 1
@@ -3554,10 +3626,10 @@ FrancoisGuillem, bthieurmel, jalazawa
 <a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/bpN" title="Mini Charts for Interactive Maps">bpN </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #03ff03">870</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #09ff09">870</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #deeff5">2018-04-12</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ecf6f9">2018-04-12</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3593,7 +3665,7 @@ bthieurmel, FrancoisGuillem, TitouanRobert, jalazawa, baptsegu
 <span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f7fff7">27</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #e0f0f5">2018-03-15</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #edf6f9">2018-03-15</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3626,10 +3698,10 @@ jalazawa
 <a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/testTravisForR">testTravisForR </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #edffed">61</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #eeffee">61</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #e4f2f6">2018-01-19</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f0f8fa">2018-01-19</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3662,10 +3734,10 @@ TitouanRobert, bthieurmel
 <a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/antaresHDF5">antaresHDF5 </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #cdffcd">174</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ceffce">174</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ebf5f9">2017-10-23</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f4f9fb">2017-10-23</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3698,10 +3770,10 @@ TitouanRobert, bthieurmel, jalazawa
 <a style="font-weight: bold" href="https://github.com/rte-antares-rpackage/js-client-tmpl" title="Europe SpatialPolygonsDataFrame Builder">js-client-tmpl </a>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fcfffc">9</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #fdfffd">9</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f0f8fa">2017-08-17</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f6fbfc">2017-08-17</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3737,7 +3809,7 @@ FrancoisGuillem
 <span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f7fff7">29</span>
 </td>
 <td style="text-align:right;">
-<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f0f8fa">2017-08-16</span>
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f6fbfc">2017-08-16</span>
 </td>
 <td style="text-align:right;">
 <span>0</span>
@@ -3834,7 +3906,8 @@ $(document).ready(function () {
     defaultFigWidth: 576,
     defaultFigHeight: 460,
     defaultFigWidthMobile: 360,
-    defaultFigHeightMobile: 460
+    defaultFigHeightMobile: 460,
+    resize_reload: true
   });
 });
 </script>
