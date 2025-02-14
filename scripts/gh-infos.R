@@ -208,6 +208,9 @@ attr(org_pkg, "organization") <- org
 attr(org_pkg, "titles") <- titles
 attr(org_pkg, "date_maj") <- Sys.Date()
 
+if(!dir.exists("datas"))
+  dir.create(path = "datas")
+
 saveRDS(org_pkg, "datas/org_pkg.rds")
 
 
