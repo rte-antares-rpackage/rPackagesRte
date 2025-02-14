@@ -1,3 +1,5 @@
+name: rPackagesRte
+output_dir: docs
 english:
   - name: antaresRead
     title: Import, Manipulate and Explore the Results of an 'Antares' Simulation
