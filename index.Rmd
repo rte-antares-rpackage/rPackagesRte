@@ -117,8 +117,9 @@ library(yaml)
 </a>
 <h2 class="title">Antares R packages</h2>
 <p style="text-align: center;">
-<a href="https://rte-antares-rpackage.github.io/rPackagesRte/dashboard.html" style="color: #FFF;">
-See activity dashboard
+<!-- <a href="https://rte-antares-rpackage.github.io/rPackagesRte/dashboard.html" style="color: #FFF;"> -->
+[See activity dashboard](dashboard.html)
+<!-- See activity dashboard -->
 </a>
 </p>
 
@@ -144,7 +145,7 @@ particlesjs::particles(
 
 
 ```{r packages}
-packages <- yaml.load_file("packages.yml")
+packages <- yaml.load_file("_site.yml")
 ```
 
 
