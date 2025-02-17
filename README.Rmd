@@ -27,18 +27,8 @@ rmarkdown::render_site()
 
 # git push site 
 
-```{}
-# First switch to the gh-pages branch
-git checkout gh-pages
+This repos no longer use `gh-pages` to be deployed. 
 
-# Next checkout the specific file you wish to add to the gh-pages branch
-git checkout master -- _site/
-
-# Perfom the commit
-git commit -m "Updated index.html from master"
-
-# And push
-git push 
-```
+"Your GitHub Pages site is currently being built from the /docs folder in the master branch."
 
 
