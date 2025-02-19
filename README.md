@@ -4,8 +4,6 @@
 # rPackagesRte
 
 <!-- badges: start -->
-
-[![render_site](https://github.com/rte-antares-rpackage/rPackagesRte/actions/workflows/render_site.yml/badge.svg)](https://github.com/rte-antares-rpackage/rPackagesRte/actions/workflows/render_site.yml)
 <!-- badges: end -->
 
 The goal of rPackagesRte is to build static site to display informations
