@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Packages R Antares</title>
+
+<script src="site_libs/header-attrs-2.26/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/roboto-0.2.0/css/roboto.css" rel="stylesheet" />
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="site_libs/particlesjs-2.0.0/particles.css" rel="stylesheet" />
+<script src="site_libs/particlesjs-2.0.0/particles.min.js"></script>
+<script src="site_libs/particles-binding-0.1.1/particles.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<style type="text/css">
+body {
+  /*font-family: Georgia, "Times New Roman", Times, serif !important;*/
+  /*font-family: 'Roboto', sans-serif !important;*/
+  /*font: normal normal bold 55px/1.4em raleway,sans-serif;*/
+  background-color: #112446 !important;
+  color: #FFF !important;
+}
+
+.main-container {
+  top: 15px;
+  width:90% !important;
+  max-width: 1400px !important;
+  margin: 0 auto;
+}
+
+
+.logo {
+  display: block;
+  background: white;
+  padding: 30px;
+  height: 170px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 60px;
+}
+
+.logo-xs {
+  display: block;
+  background: white;
+  padding: 30px;
+  height: 110px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+}
+
+.title {
+  text-align: center;
+  font-weight:bold;
+  border-top: 2px solid white;
+  margin-top: 0;
+  text-transform: uppercase;
+  font-size: 17px;
+  padding-top: 10px;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+.thumbnail-content {
+  color: #000;
+  padding: 5px;
+  text-align: center;
+}
+
+.thumbnail-title {
+  padding: 5px;
+  text-align: center;
+}
+
+.thumbnail {
+  position: relative;
+  padding: 0px;
+  margin-bottom: 20px;
+  overflow: auto;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 210px;
+  object-fit: contain;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+  color: #000;
+  background-color: #FFF;
+}
+
+.nav-pills>li>a {
+  border-radius: 4px;
+  color: #FFF;
+  border: 1px solid #FFF;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+  color: #000;
+}
+
+</style>
+<a href="https://antares-simulator.org/" target = "_blank">
+<img src="images/antares-logo.png" class="logo hidden-xs"></img>
+<img src="images/antares-logo.png" class="logo-xs visible-xs-block"></img>
+</a>
+<h2 class="title">
+Antares R packages
+</h2>
+<p style="text-align: center;">
+<!-- <a href="https://rte-antares-rpackage.github.io/rPackagesRte/dashboard.html" style="color: #FFF;"> -->
+<a href="dashboard.html">See activity dashboard</a>
+<!-- See activity dashboard --> </a>
+</p>
+<style>body {font-family: 'Roboto', sans-serif;}</style>
+<div id="htmlwidget-f045ad564cb59f8340ef" style="width:672px;height:0px;" class="particles html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f045ad564cb59f8340ef">{"x":{"config":{"particles":{"number":{"value":80,"density":{"enable":true,"value_area":800}},"color":{"value":"#ff9800"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":1,"random":false,"anim":{"enable":false,"speed":1,"opacity_min":0.1,"sync":false}},"size":{"value":5,"random":true,"anim":{"enable":false,"speed":40,"size_min":0.1,"sync":false}},"line_linked":{"enable":true,"distance":150,"color":"#ff9800","opacity":1,"width":1},"move":{"enable":true,"speed":6,"direction":"none","random":false,"straight":false,"out_mode":"out","bounce":false,"attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":true,"mode":"repulse"},"onclick":{"enable":true,"mode":"push"},"resize":true}},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":400,"size":40,"duration":2,"opacity":8,"speed":3},"repulse":{"distance":200,"duration":0.4},"push":{"particles_nb":4},"remove":{"particles_nb":2}},"retina_detect":true},"target_id":null,"timeout":1000},"evals":[],"jsHooks":[]}</script>
+<div id="section"
+class="section level1 tabset tabset-fade tabset-pills">
+<h1 class="tabset tabset-fade tabset-pills"></h1>
+<div id="en" class="section level2">
+<h2><span>
+<img src="assets/flags/gb.svg" width="16" height="12" style="vertical-align: 0px;"/>EN</span></h2>
+<p style="text-align: center; color: #FFF;">
+Find here the most popular R packages developed by Rte around Antares.
+You can edit a study, read simulation results and visualize them!
+</p>
+<div class="row">
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://rte-antares-rpackage.github.io/antaresRead/index.html" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/antaresRead.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://rte-antares-rpackage.github.io/antaresRead/index.html" target="_blank">antaresRead</a>
+</b>
+</h4>
+<div class="thumbnail-content">Import, manipulate and explore results generated by 'Antares', a powerful open source software developed by RTE (Réseau de Transport d’Électricité) to simulate and study electric power systems.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://rte-antares-rpackage.github.io/antaresEditObject/index.html" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/antaresEditObject.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://rte-antares-rpackage.github.io/antaresEditObject/index.html" target="_blank">antaresEditObject</a>
+</b>
+</h4>
+<div class="thumbnail-content">Edit an Antares study before running a simulation. Methods are provided to create (and remove) areas, links between them, thermal cluster and binding constraints.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/antaresProcessing" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/gears.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/antaresProcessing" target="_blank">antaresProcessing</a>
+</b>
+</h4>
+<div class="thumbnail-content">Process results generated by Antares. Allows to create new columns like net load, load factors, upward and downward margins or to compute aggregated statistics like economic surpluses of consumers, producers and sectors.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://rte-antares-rpackage.github.io/antaresViz/index.html" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/antaresViz.jpg"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://rte-antares-rpackage.github.io/antaresViz/index.html" target="_blank">antaresViz</a>
+</b>
+</h4>
+<div class="thumbnail-content">Visualize results generated by Antares. This package provides functions that create interactive charts to help users visually explore the results of their simulations.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/antaresWaterValues" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/antaresWaterValues.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/antaresWaterValues" target="_blank">antaresWaterValues</a>
+</b>
+</h4>
+<div class="thumbnail-content">Compute water values to use in Antares. This package allows to run specific simulations in Antares from within R, and to use the results of these simulations to compute Bellman values and water values for each stock level and each week of the year.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/fbClust" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/fbclust.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/fbClust" target="_blank">fbClust</a>
+</b>
+</h4>
+<div class="thumbnail-content">This package allows to analyse a database of Flow-Based domains and to cluster and extract the most representative domains to be applied to an Antares study, as well as probability matrices to allocate the domains on prospective studies.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/fbAntares" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/fbantares.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/fbAntares" target="_blank">fbAntares</a>
+</b>
+</h4>
+<div class="thumbnail-content">This package allows to add Flow-Based domains as binding constraints in Antares. It also provides a method to reduce the complexity of Flow-Based domains, and visualization functions.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/antaresAdequacyPatch" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/adequacypatch.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/antaresAdequacyPatch" target="_blank">antaresAdequacyPatch</a>
+</b>
+</h4>
+<div class="thumbnail-content">This package allows to post-process the results of an Antares simulation to apply the adequacy patch, which is the set of curtailment sharing rules implemented in the Euphemia market algorithm.</div>
+</div>
+</div>
+</div>
+</div>
+<div id="fr" class="section level2">
+<h2><span>
+<img src="assets/flags/fr.svg" width="16" height="12" style="vertical-align: 0px;"/>FR</span></h2>
+<p style="text-align: center; color: #FFF;">
+Retouvez ici les packages R les plus populaires développés par Rte
+autour d’Antares. Vous pouvez éditer une étude, lire les résultats de
+simulations et les visualiser !
+</p>
+<div class="row">
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://rte-antares-rpackage.github.io/antaresRead/index.html" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/antaresRead.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://rte-antares-rpackage.github.io/antaresRead/index.html" target="_blank">antaresRead</a>
+</b>
+</h4>
+<div class="thumbnail-content">Importer, manipuler et explorer les résultats d'une simulation Antares.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://rte-antares-rpackage.github.io/antaresEditObject/index.html" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/antaresEditObject.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://rte-antares-rpackage.github.io/antaresEditObject/index.html" target="_blank">antaresEditObject</a>
+</b>
+</h4>
+<div class="thumbnail-content">Modifier une étude Antares avant de lancer une simulation. Les méthodes fournies permettent notamment de créer et de supprimer les zones, les liens entre elles, les clusters thermiques et les contraintes couplantes.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/antaresProcessing" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/gears.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/antaresProcessing" target="_blank">antaresProcessing</a>
+</b>
+</h4>
+<div class="thumbnail-content">Traiter les résultats Antares. Ce package permet notamment de créer des nouvelles colonnes telle que la charge nette, les facteurs de charge, les marges ascendantes et descendantes. Il facilite également le calcul de statistiques agrégées.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://rte-antares-rpackage.github.io/antaresViz/index.html" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/antaresViz.jpg"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://rte-antares-rpackage.github.io/antaresViz/index.html" target="_blank">antaresViz</a>
+</b>
+</h4>
+<div class="thumbnail-content">Visualiser les résultats générés par Antares. Les fonctions fournies permettent de créer des graphiques interactifs qui permettent d'explorer les résultats des simulations.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/antaresWaterValues" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/antaresWaterValues.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/antaresWaterValues" target="_blank">antaresWaterValues</a>
+</b>
+</h4>
+<div class="thumbnail-content">Calculer les valeurs de l'eau à utiliser dans Antares. Ce package permet de lancer des simulations spécifiques dans Antares depuis R, et, à partir des résultats, de calculer les valeurs de Bellman et valeurs de l'eau pour chaque niveau de stock et chaque semaine.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/fbClust" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/fbclust.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/fbClust" target="_blank">fbClust</a>
+</b>
+</h4>
+<div class="thumbnail-content">Ce package permet d'analyser une base de données de domaines Flow-Based, de les clusteriser et d'extraire les domaines les plus représentatifs pour les utiliser dans des études Antares, ainsi que des matrices de proabailité pour allouer ces domaines à des études prospectives.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/fbAntares" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/fbantares.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/fbAntares" target="_blank">fbAntares</a>
+</b>
+</h4>
+<div class="thumbnail-content">Ce package permet d'ajouter des domaines Flow-Based dans Antares en tant que contraintes couplantes. Il fournit aussi une méthode pour réduire la complexité des domaines, et des fonctions de visualisation.</div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="thumbnail" style="height: 420px;">
+<a href="https://github.com/rte-antares-rpackage/antaresAdequacyPatch" target="_blank" class="thumbnail" style="margin-bottom: 5px">
+<div class="item-image" style="text-align: center;">
+<img src="images/adequacypatch.png"/>
+</div>
+</a>
+<h4 class="thumbnail-title">
+<b>
+<a href="https://github.com/rte-antares-rpackage/antaresAdequacyPatch" target="_blank">antaresAdequacyPatch</a>
+</b>
+</h4>
+<div class="thumbnail-content">Ce package permet de post-traiter les résultats d'une simulation Antares pour y appliquer l'adequacy patch, qui est l'ensemble des règles de partage de la défaillance implémenté dans l'algorithme marché Euphemia.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
